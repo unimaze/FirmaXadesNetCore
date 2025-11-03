@@ -6,7 +6,7 @@
 // Originally published under the CECILL-B Free Software license agreement,
 // modified by Dpto. de Nuevas Tecnologías de la Dirección General de Urbanismo del Ayto. de Cartagena
 // and published under the GNU Lesser General Public License version 3.
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the +terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -18,7 +18,7 @@
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with this program.  If not, see http://www.gnu.org/licenses/. 
+// along with this program.  If not, see http://www.gnu.org/licenses/.
 
 using System.Security.Cryptography;
 
@@ -85,7 +85,7 @@ namespace Microsoft.Xades;
 ///         method can be called to create the necessary OID registrations.
 ///     </para>
 /// </summary>
-internal sealed class RSAPKCS1SHA256SignatureDescription : SignatureDescription
+public sealed class RSAPKCS1SHA256SignatureDescription : SignatureDescription
 {
 	/// <summary>
 	///     Construct an RSAPKCS1SHA256SignatureDescription object. The default settings for this object

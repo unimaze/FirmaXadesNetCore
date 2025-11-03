@@ -6,7 +6,7 @@
 // Originally published under the CECILL-B Free Software license agreement,
 // modified by Dpto. de Nuevas Tecnologнas de la Direcciуn General de Urbanismo del Ayto. de Cartagena
 // and published under the GNU Lesser General Public License version 3.
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the +terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -18,7 +18,7 @@
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with this program.  If not, see http://www.gnu.org/licenses/. 
+// along with this program.  If not, see http://www.gnu.org/licenses/.
 
 using System.Collections;
 using System.Security.Cryptography;
@@ -225,6 +225,9 @@ public class XadesSignedXml : SignedXml
 	{
 		_signatureDocument = signatureDocument;
 		_cachedXadesObjectDocument = null;
+#if NET462
+		FirmaXadesNetCore.Compatibility.Net462CryptoConfig.EnsureRegistered();
+#endif
 	}
 
 	#endregion
@@ -383,7 +386,7 @@ public class XadesSignedXml : SignedXml
 			Id = xadesObject.Id,
 			Data = xadesObject.GetXml().ChildNodes,
 		};
-		AddObject(dataObject); //Add the XAdES object                            
+		AddObject(dataObject); //Add the XAdES object
 
 		var reference = new Reference();
 		_signedPropertiesIdBuffer = xadesObject.QualifyingProperties.SignedProperties.Id;
@@ -719,7 +722,7 @@ public class XadesSignedXml : SignedXml
 		HashAlgorithmName hashAlgorithmName = FirmaXadesNetCore.DigestMethod
 			.GetByUri(xadesCertificateDigest.DigestMethod.Algorithm!)
 			.GetHashAlgorithmName();
-		ReadOnlySpan<byte> keyInfoCertificateHash = keyInfoCertificate.GetCertHash(hashAlgorithmName);
+		byte[] keyInfoCertificateHash = GetCertHashCompat(keyInfoCertificate, hashAlgorithmName);
 
 		if (!keyInfoCertificateHash.SequenceEqual(xadesCertificateDigest.DigestValue))
 		{
@@ -1442,7 +1445,7 @@ public class XadesSignedXml : SignedXml
 	}
 
 	/// <summary>
-	/// Copy of System.Security.Cryptography.Xml.SignedXml.BuildDigestedReferences() which will add a "ds" 
+	/// Copy of System.Security.Cryptography.Xml.SignedXml.BuildDigestedReferences() which will add a "ds"
 	/// namespace prefix to all XmlDsig nodes
 	/// </summary>
 	private void BuildDigestedReferences()
@@ -2138,5 +2141,31 @@ public class XadesSignedXml : SignedXml
 		return result;
 	}
 
+	private static byte[] GetCertHashCompat(X509Certificate2 cert, HashAlgorithmName alg)
+	{
+#if NET6_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+    // On modern TFMs you can call the overload directly.
+    // Note: it returns ReadOnlySpan<byte>, so materialize to byte[].
+    return cert.GetCertHash(alg).ToArray();
+#else
+		// net462 / netstandard2.0 path
+		if (alg == HashAlgorithmName.SHA256)
+		{
+			using (var h = SHA256.Create()) return h.ComputeHash(cert.RawData);
+		}
+		if (alg == HashAlgorithmName.SHA384)
+		{
+			using (var h = SHA384.Create()) return h.ComputeHash(cert.RawData);
+		}
+		if (alg == HashAlgorithmName.SHA512)
+		{
+			using (var h = SHA512.Create()) return h.ComputeHash(cert.RawData);
+		}
+		// Fall back to SHA-1 (matches X509Certificate2.GetCertHash() semantics)
+		using (var hSha1 = SHA1.Create()) return hSha1.ComputeHash(cert.RawData);
+#endif
+	}
+
 	#endregion
+
 }

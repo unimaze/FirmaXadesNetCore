@@ -1,4 +1,6 @@
-﻿using System.Security.Cryptography;
+﻿using System;
+using System.IO;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml;
 
@@ -107,26 +109,85 @@ public abstract class TestsBase
 		Assert.IsTrue(result.IsValid, $"{result.Message}:{result.Exception}");
 	}
 
-	protected static X509Certificate2 CreateSelfSignedCertificate(int keySizeInBits = 2048, string name = "test", string password = "WeNeedASaf3rPassword")
+	protected static X509Certificate2 CreateSelfSignedCertificate(int keySizeInBits = 2048, string name = "test",
+		string password = "WeNeedASaf3rPassword")
 	{
+#if !NET462
 		var distinguishedName = new X500DistinguishedName($"CN={name}");
 
 		using var rsa = RSA.Create(keySizeInBits);
 
-		var request = new CertificateRequest(distinguishedName, rsa, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+		var request =
+ new CertificateRequest(distinguishedName, rsa, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
 		request.CertificateExtensions.Add(new SubjectAlternativeNameBuilder().Build());
 
-		using X509Certificate2 certificate = request.CreateSelfSigned(new DateTimeOffset(DateTime.UtcNow.AddDays(-1)), new DateTimeOffset(DateTime.UtcNow.AddDays(3650)));
+		using X509Certificate2 certificate =
+ request.CreateSelfSigned(new DateTimeOffset(DateTime.UtcNow.AddDays(-1)), new DateTimeOffset(DateTime.UtcNow.AddDays(3650)));
 
 #if NET6_0_OR_GREATER
 		if (OperatingSystem.IsWindows())
 		{
 			certificate.FriendlyName = name;
 		}
+#else
+			certificate.FriendlyName = name;
 #endif
 
 		byte[] pfxBytes = certificate.Export(X509ContentType.Pfx, password);
 
 		return new X509Certificate2(pfxBytes, password, X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.Exportable);
+#else
+	// --- net462-only (no CertificateRequest / SAN builder) ---
+    // Requires: <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" />
+    var rnd = new Org.BouncyCastle.Security.SecureRandom();
+
+    var gen = new Org.BouncyCastle.Crypto.Generators.RsaKeyPairGenerator();
+    gen.Init(new Org.BouncyCastle.Crypto.KeyGenerationParameters(rnd, keySizeInBits));
+    var kp = gen.GenerateKeyPair();
+
+    var dn = new Org.BouncyCastle.Asn1.X509.X509Name($"CN={name}");
+    var serial = Org.BouncyCastle.Math.BigInteger.ProbablePrime(120, new Random());
+    var notBefore = DateTime.UtcNow.AddDays(-1);
+    var notAfter = DateTime.UtcNow.AddYears(10);
+
+    var v3 = new Org.BouncyCastle.X509.X509V3CertificateGenerator();
+    v3.SetSerialNumber(serial);
+    v3.SetIssuerDN(dn);
+    v3.SetSubjectDN(dn);
+    v3.SetNotBefore(notBefore);
+    v3.SetNotAfter(notAfter);
+    v3.SetPublicKey(kp.Public);
+
+    v3.AddExtension(
+        Org.BouncyCastle.Asn1.X509.X509Extensions.BasicConstraints, true,
+        new Org.BouncyCastle.Asn1.X509.BasicConstraints(false));
+    v3.AddExtension(
+        Org.BouncyCastle.Asn1.X509.X509Extensions.KeyUsage, false,
+        new Org.BouncyCastle.Asn1.X509.KeyUsage(
+            Org.BouncyCastle.Asn1.X509.KeyUsage.DigitalSignature |
+            Org.BouncyCastle.Asn1.X509.KeyUsage.KeyEncipherment));
+
+    var sigFactory = new Org.BouncyCastle.Crypto.Operators.Asn1SignatureFactory("SHA256WITHRSA", kp.Private);
+    var bcCert = v3.Generate(sigFactory);
+
+    var store = new Org.BouncyCastle.Pkcs.Pkcs12StoreBuilder().Build();
+    store.SetKeyEntry("key",
+        new Org.BouncyCastle.Pkcs.AsymmetricKeyEntry(kp.Private),
+        new[] { new Org.BouncyCastle.Pkcs.X509CertificateEntry(bcCert) });
+
+    byte[] pfxBytes;
+    using (var ms = new System.IO.MemoryStream())
+    {
+        store.Save(ms, password.ToCharArray(), rnd);
+        pfxBytes = ms.ToArray();
+    }
+
+    var x509 = new X509Certificate2(pfxBytes, password,
+        X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.Exportable);
+
+    try { x509.FriendlyName = name; } catch { /* ignore */ }
+
+    return x509;
+#endif
 	}
 }
