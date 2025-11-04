@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net6.0;net48;net462</TargetFrameworks>
+		<TargetFrameworks>net462;net80</TargetFrameworks>
 		<IsPackable>false</IsPackable>
 		<ImplicitUsings>false</ImplicitUsings>
 	</PropertyGroup>
@@ -14,7 +14,7 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="System.Security.Cryptography.Pkcs" Version="6.0.1" />
+		<PackageReference Include="System.Security.Cryptography.Pkcs" Version="9.0.10" />
 	</ItemGroup>
 
 	<ItemGroup>

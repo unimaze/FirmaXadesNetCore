@@ -1,4 +1,6 @@
-﻿namespace FirmaXadesNetCore;
+﻿using System;
+
+namespace FirmaXadesNetCore;
 
 /// <summary>
 /// Represents a timestamp parameters.

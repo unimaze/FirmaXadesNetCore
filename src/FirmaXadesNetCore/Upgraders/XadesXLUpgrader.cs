@@ -15,15 +15,19 @@
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with this program.  If not, see http://www.gnu.org/licenses/. 
+// along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 // E-Mail: informatica@gemuc.es
-// 
+//
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography.Xml;
+using System.Threading;
 using System.Xml;
 using FirmaXadesNetCore.Clients;
 using FirmaXadesNetCore.Upgraders.Parameters;

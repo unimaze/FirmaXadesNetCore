@@ -20,6 +20,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 
+using System;
 using System.Security.Cryptography;
 
 namespace Microsoft.Xades;
@@ -105,7 +106,9 @@ public sealed class RSAPKCS1SHA256SignatureDescription : SignatureDescription
 		DeformatterAlgorithm = typeof(RSAPKCS1SignatureDeformatter).FullName;
 	}
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 	public override AsymmetricSignatureDeformatter CreateDeformatter(AsymmetricAlgorithm key)
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	{
 		if (key == null)
 		{
@@ -117,7 +120,9 @@ public sealed class RSAPKCS1SHA256SignatureDescription : SignatureDescription
 		return deformatter;
 	}
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 	public override AsymmetricSignatureFormatter CreateFormatter(AsymmetricAlgorithm key)
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 	{
 		if (key == null)
 		{

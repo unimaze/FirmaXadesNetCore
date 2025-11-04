@@ -1,19 +1,40 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net6.0;netstandard2.0;net462</TargetFrameworks>
-		<Authors>Verdun Labs</Authors>
-		<Company>TelviSoft CR</Company>
-		<RepositoryUrl>https://github.com/DavidHoldingAD/FirmaXadesNetCore</RepositoryUrl>
-		<PackageProjectUrl>https://github.com/DavidHoldingAD/FirmaXadesNetCore</PackageProjectUrl>
-		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-		<Description>FirmaXadesNet is a library developed in C# for the generation of XAdES signatures carried out by the Department of New Technologies of the Town Planning Department of the Cartagena City Council, which is based on a modification of the XAdES starter kit developed by Microsoft France.</Description>
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>2.2.0</Version>
-		<IncludeSymbols>true</IncludeSymbols>
-		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<TargetFrameworks>net80;netstandard2.0;net462</TargetFrameworks>
+		<LangVersion>latest</LangVersion>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<Nullable>enable</Nullable>
+		<ImplicitUsings>disable</ImplicitUsings>
+
+		<PackageId>Unimaze.FirmaXadesNetCore</PackageId>
+		<Version>2.3.0</Version>
+		<Authors>Unimaze, Verdun Labs</Authors>
+		<Company>Unimaze ehf.</Company>
+		<Product>Unimaze.FirmaXadesNetCore</Product>
+
+		<Description>
+			FirmaXadesNet is a library developed in C# for the generation of XAdES signatures.
+			It was derived from package carried out by the Department of New Technologies of the Town Planning Department
+			of the Cartagena City Council, which is based on a modification of the XAdES starter kit developed by Microsoft France.
+			This Unimaze fork extends FirmaXadesNetCore (originally by Verdun Labs) to support .NET Framework 4.6.2 and .NET Standard 2.0,
+			while maintaining full compatibility with .NET 6 and .NET 8.
+		</Description>
+
+		<RepositoryUrl>https://github.com/unimaze/FirmaXadesNetCore</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+		<PackageProjectUrl>https://github.com/unimaze/FirmaXadesNetCore</PackageProjectUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+
+		<PackageTags>xades xades-t xades-x ocsp xml-signature x509 unimaze netstandard dotnet</PackageTags>
+  		<PackageIcon>icon.png</PackageIcon>
+
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -25,18 +46,22 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="BouncyCastle.Cryptography" Version="2.0.0" />
+		<PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" />
 		<PackageReference Include="System.Memory" Version="4.5.5" Condition="'$(TargetFramework)' == 'net48'" />
 		<PackageReference Include="System.Net.Http" Version="4.3.4" Condition="'$(TargetFramework)' == 'net48'" />
 		<PackageReference Include="Nullable" Version="1.3.1">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="System.Security.Cryptography.Xml" Version="6.0.1" />
+		<PackageReference Include="System.Security.Cryptography.Xml" Version="9.0.10" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<None Include="$(SolutionDir)/licenses/LICENSE.txt" Pack="true" PackagePath="$(PackageLicenseFile)" />
+	</ItemGroup>
+
+	<ItemGroup>
+	<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
 	</ItemGroup>
 
 	<ItemGroup>

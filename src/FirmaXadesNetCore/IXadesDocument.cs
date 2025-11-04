@@ -1,4 +1,6 @@
-﻿namespace FirmaXadesNetCore;
+﻿using System.IO;
+
+namespace FirmaXadesNetCore;
 
 /// <summary>
 /// Provides a mechanism for working with XAdES XML documents.

@@ -15,12 +15,14 @@
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with this program.  If not, see https://www.gnu.org/licenses/lgpl-3.0.txt. 
+// along with this program.  If not, see https://www.gnu.org/licenses/lgpl-3.0.txt.
 //
 // E-Mail: informatica@gemuc.es
-// 
+//
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
 using System.Xml;
 
 namespace FirmaXadesNetCore;

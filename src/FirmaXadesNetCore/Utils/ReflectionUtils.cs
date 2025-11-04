@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.IO;
 using System.Reflection;
 using System.Security.Cryptography.Xml;
 using System.Xml;
@@ -30,7 +32,7 @@ internal static class ReflectionUtils
 		//XadesV132BaseResourceName,
 		//XadesV132506ResourceName,
 		XadesV132601ResourceName,
-		
+
 		// XAdES v1.4.1
 		//XadesV141BaseResourceName,
 		//XadesV141506ResourceName,

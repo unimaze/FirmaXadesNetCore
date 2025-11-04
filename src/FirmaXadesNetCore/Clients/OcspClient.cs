@@ -15,13 +15,15 @@
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with this program.  If not, see http://www.gnu.org/licenses/. 
+// along with this program.  If not, see http://www.gnu.org/licenses/.
 //
 // E-Mail: informatica@gemuc.es
-// 
+//
 // --------------------------------------------------------------------------------------------------------------------
 
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using FirmaXadesNetCore.Utils;
@@ -125,7 +127,7 @@ public class OcspClient
 				return null;
 			}
 
-			// Switched to manual parse 
+			// Switched to manual parse
 			var s = (Asn1Sequence)obj;
 			IEnumerator elements = s.GetEnumerator();
 
@@ -134,7 +136,7 @@ public class OcspClient
 				var element = (Asn1Sequence)elements.Current;
 				var oid = (DerObjectIdentifier)element[0];
 
-				if (oid.Id.Equals("1.3.6.1.5.5.7.48.1")) // Is Ocsp? 
+				if (oid.Id.Equals("1.3.6.1.5.5.7.48.1")) // Is Ocsp?
 				{
 					var taggedObject = (Asn1TaggedObject)element[1];
 					var gn = GeneralName.GetInstance(taggedObject);

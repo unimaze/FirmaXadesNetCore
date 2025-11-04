@@ -1,0 +1,47 @@
+name: publish
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*.*.*'   # e.g., v1.2.3
+
+jobs:
+  build-pack-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            6.0.x
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build -c Release --no-restore
+
+      - name: Set version from tag
+        id: ver
+        run: |
+          TAG="${GITHUB_REF##*/}"        # v1.2.3
+          echo "pkgver=${TAG#v}" >> $GITHUB_OUTPUT
+
+      - name: Pack
+        run: >
+          dotnet pack src/FirmaXadesNetCore/FirmaXadesNetCore.csproj
+          -c Release --no-build
+          -o ./nupkgs
+          /p:Version=${{ steps.ver.outputs.pkgver }}
+
+      - name: Publish to nuget.org
+        run: >
+          dotnet nuget push ./nupkgs/*.nupkg
+          --api-key ${{ secrets.NUGET_API_KEY }}
+          --source https://api.nuget.org/v3/index.json
