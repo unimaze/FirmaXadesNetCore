@@ -25,19 +25,19 @@ jobs:
     strategy:
       matrix:
         options:
+          # net8.0
+          - os: ubuntu-latest
+            tf: net8.0
+          - os: windows-latest
+            tf: net8.0
+          - os: macos-latest
+            tf: net8.0
           # net7.0
           - os: ubuntu-latest
             tf: net7.0
+          # net462
           - os: windows-latest
-            tf: net7.0
-          - os: macos-latest
-            tf: net7.0
-          # net6.0
-          - os: ubuntu-latest
-            tf: net6.0
-          # net48
-          - os: windows-latest
-            tf: net48
+            tf: net462
     steps:
      - name: Checkout
        uses: actions/checkout@v2.5.0
